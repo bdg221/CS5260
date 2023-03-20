@@ -2,17 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import annotations
-from uuid import UUID, uuid4
+
+from src.cs5260.Utilities.read_files import read_csv
+
 
 class State(object):
 
-   ID: UUID
-   NAME: str
 
-   def __init__(self, name: str) -> None:
+
+   def __init__(self, values: dict[dict]) -> None:
       super().__init__()
-      self.ID = uuid4()
-      self.NAME = name
+      self.schedule = []
+      self.values = values
+
 
    def __eq__(self, other: State) -> bool:
       return self.ID == other.ID
@@ -20,5 +22,5 @@ class State(object):
    def __hash__(self) -> int:
       return hash(self.ID)
 
-   def __repr__(self) -> str:
-      return self.NAME
+   def __repr__(self) -> dict:
+      return self.values
