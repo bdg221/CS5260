@@ -1,6 +1,6 @@
-﻿Country,AvailableLand,Water,Population,PopulationWaste,MetallicElements,Timber,Farm,FarmWaste,MetallicAlloys,MetallicAlloysWaste,Electronics,ElectronicsWaste,Housing,HousingWaste,Food,FoodWaste,PotentialFossilEnergy,PotentialFossilEnergyUsable,PotentialFossilEnergyUsableWaste,PotentialRenewableEnergy,PotentialRenewableEnergyUsable,PotentialRenewableEnergyUsableWaste
-Atlantis,1000,1000,100,0,700,2000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Brobdingnag,1000,1000,50,0,300,1200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Carpania,1000,1000,25,0,100,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Dinotopia,1000,1000,30,0,200,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Erewhon,1000,1000,70,0,500,1700,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+﻿Country,Population,MetallicElements,Timber,MetallicAlloys,MetallicAlloysWaste,Electronics,ElectronicsWaste,Housing,HousingWaste
+Atlantis,100,700,2000,0,0,0,0,0,0
+Brobdingnag,50,300,1200,0,0,0,0,0,0
+Carpania,25,100,300,0,0,0,0,0,0
+Dinotopia,30,200,200,0,0,0,0,0,0
+Erewhon,70,500,1700,0,0,0,0,0,0
