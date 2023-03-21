@@ -1,5 +1,5 @@
-﻿Country,Population,MetallicElements,Timber,MetallicAlloys,MetallicAlloysWaste,Electronics,ElectronicsWaste,Housing,HousingWaste
-Atlantis,100,700,2000,0,0,0,0,0,0
+Country,Population,MetallicElements,Timber,MetallicAlloys,MetallicAlloysWaste,Electronics,ElectronicsWaste,Housing,HousingWaste
+Atlantis,100,700,1000,0,0,0,0,0,0
 Brobdingnag,50,300,1200,0,0,0,0,0,0
 Carpania,25,100,300,0,0,0,0,0,0
 Dinotopia,30,200,200,0,0,0,0,0,0

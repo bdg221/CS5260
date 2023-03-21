@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import annotations
-from typing import List, Union
-from ..DataTypes import Action, Heuristic, Node, PriorityQueue, Solution, State
-
+from PriorityQueue import PriorityQueue
+from Node import Node
 import math, copy
 
 class scheduler:
@@ -26,7 +25,7 @@ class scheduler:
         final_schedules = []
         schedule = []
         node = Node(self.INIT_STATES, schedule, 0)
-        frontier = PriorityQueue(lambda node: self.expected_utility(node.STATE, node.SCHEDULE), False).add(node)
+        frontier = PriorityQueue(lambda node: self.expected_utility(node.STATE, node.SCHEDULE), False, self.FRONTIER_SIZE).add(node)
 
         while not frontier.is_empty():
 
@@ -34,8 +33,9 @@ class scheduler:
             # if reached depth_bound
             if (len(node.SCHEDULE) >= depth):
                 final_schedules.append(node.SCHEDULE)
+                # print(node.STATE)
                 if len(final_schedules) >= num_schedules:
-                    print(len(frontier.as_list()))
+                    # print(len(frontier.as_list()))
                     return final_schedules
             else:
                 # generate successors
@@ -67,14 +67,46 @@ class scheduler:
                             for index in range(len(action['outputs'])):
                                 action['outputs'][index]['quantity'] = action['outputs'][index]['quantity'] * i
                             temp_schedule = copy.deepcopy(node.SCHEDULE)
-                            temp_schedule.append({"Action": action, "EU": 0})
+                            temp_schedule.append({"Action": action, "Country": ['self'], "EU": 0})
                             temp_eu = self.expected_utility(temp_state, temp_schedule)
-                            temp_schedule.pop()
-                            temp_schedule.append({"Action": action, "Country": ['self'], "EU": temp_eu})
+                            temp_schedule[len(temp_schedule)-1]['EU'] = temp_eu
+                            # if(transform == 'Housing' or transform == 'Electronics'):
+                            #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                            #     print(temp_schedule)
+                            #     print(temp_state)
+                            #     print(temp_eu)
+                            #     print(self.state_quality(temp_state, self.COUNTRY))
+                            #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
                             frontier.add(Node(temp_state, temp_schedule, temp_eu))
 
                         else:
                             break
+
+                # now with transfers
+                for country in self.INIT_STATES.keys():
+                    # no trading with yourself
+                    if (country != self.COUNTRY):
+                        for resource in self.RESOURCES.keys():
+                            temp_state = copy.deepcopy(node.STATE)
+                            if (int(temp_state[country][resource]) > 0):
+                                for index in range(1, int(temp_state[country][resource])):
+                                    temp_state[self.COUNTRY][resource] += index
+                                    temp_state[country][resource] -= index
+                                    temp_schedule = copy.deepcopy(node.SCHEDULE)
+                                    temp_schedule.append({"Action": action, "Country": [country, 'self'], "EU": 0})
+                                    temp_eu = self.expected_utility(temp_state, temp_schedule)
+                                    temp_schedule[len(temp_schedule) - 1]['EU'] = temp_eu
+                                    # if(transform == 'Housing' or transform == 'Electronics'):
+                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                    #     print(temp_schedule)
+                                    #     print(temp_state)
+                                    #     print(temp_eu)
+                                    #     print(self.state_quality(temp_state, self.COUNTRY))
+                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                    frontier.add(Node(temp_state, temp_schedule, temp_eu))
+                                    pass
+                            pass
+
 
                 # next is transfers
 
@@ -89,12 +121,15 @@ class scheduler:
             if (self.RESOURCES[resource]['Weight'].count(';') > 0):
                 temp_weights = self.RESOURCES[resource]['Weight'].split(';')
                 temp_factors = self.RESOURCES[resource]['Factor'].split(';')
+
                 for index in range(len(temp_factors)):
-                    if (float(states[country][resource]) / float(states[country]['Population']) < float(
-                            temp_factors[index])):
+                    x = float(states[country][resource]) / float(states[country]['Population'])
+                    if x > 0.5:
+                        pass
+                    if (float(states[country][resource]) / float(states[country]['Population']) < float(temp_factors[index])):
                         break
-                ret_value += float(states[country][resource]) / float(states[country]['Population']) * float(
-                    temp_weights[index])
+
+                ret_value += float(states[country][resource]) / float(states[country]['Population']) * float(temp_weights[index])
 
             # default value: resource/popultation * weight
             else:
