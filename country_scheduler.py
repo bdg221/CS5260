@@ -37,4 +37,4 @@ def country_scheduler(your_country_name, resources_filename, initial_state_filen
     # 3. perform search
     # 4 . write out returned schedules to file
 # Test
-country_scheduler("Atlantis", "Inputs/resources.csv", "Inputs/states.csv", "outputs/output.txt", 1, 3, 10)
+country_scheduler("Atlantis", "Inputs/resources.csv", "Inputs/states.csv", "outputs/output.txt", 1, 10, 10)
