@@ -1,27 +1,36 @@
-Sample AI Search Strategy Code for CS 5260
+Final Project for CS 5260
 ==========================================
 
 Overview
 --------
 
-This repository holds sample code to illustrate one potential methodology for organizing your code in a way such that it is relatively simple to try out different search strategies, implement your own state spaces, and define your own set of actions and/or heuristics.
-
-Note that most of this code is centered around carrying out searches using the methodologies discussed in Weeks 1 and 2 of the CS 5260 course, and as such, it does not implement more advanced concepts, such as factored representations for state, utility-based searches, adversarial searches, etc. This is **only** intended to give students an idea of how it is possible to formulate your problems in a way that allows you to explore different strategies with relative ease.
-
-
-Installation
-------------
-
-The easiest way to install this library is in *developer mode* which allows you to make changes to the code that will automatically be picked up by your Python environment. You can do this by cloning the repository to your hard drive and issuing the following command from the ``CS5260`` directory in a terminal:
-
-``python3 -m pip install -e .``
-
+This repository is for the final project for CS 5260. More info to come.
 
 Usage
------
+------------
 
-Once installed, you are free to explore the various search-based primitives and data types under the ``DataTypes`` subdirectory. The ``SearchStrategies`` directory contains a number of pre-implemented, basic search strategies for illustrative purposes. Finally, the ``Examples`` directory contains a script called ``HW2_1.py`` that you can use to test carrying out a number of search strategies that we've covered so far on the explicit graph defined in the Week 2 homework.
+The easiest way to run the program is from the cs5260 directory run:
 
-To run this script, simply issue the following command:
+``python3 country_scheduler.py``
 
-``python3 -m cs5260.Examples.HW2_1``
+NOTE: Currently to change settings for the search, manually change the following line in country_scheduler.py:
+
+country_scheduler("Atlantis", "Inputs/resources.csv", "Inputs/states.csv", "outputs/output.txt", 1, 3, 10)
+
+
+Info
+------------
+country_scheduler.py - This file calls country_scheduler which builds the initial environment and calls the search.
+
+scheduler.py - This file does the search and contains all Expected Utility functions.
+
+read_files.py - This file has code from John Ford for reading in and parsing files.
+
+Node.py - Modified from the sample code to handle this stuff.
+
+PriorityQueue.py - Modified form the sample code to handle this stuff.
+
+Inputs\ - This folder contains the input files.
+
+Archive\ - This folder contains archived versions of input files
+
