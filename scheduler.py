@@ -82,7 +82,7 @@ class scheduler:
                         else:
                             break
 
-                print("node depth " + str(len(node.SCHEDULE)) + " EU " +str(node.EU))
+                # print("node depth " + str(len(node.SCHEDULE)) + " EU " +str(node.EU))
 
                 # now with transfers
                 for country in self.INIT_STATES.keys():
