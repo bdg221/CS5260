@@ -82,18 +82,20 @@ class scheduler:
                         else:
                             break
 
+                print("node depth " + str(len(node.SCHEDULE)) + " EU " +str(node.EU))
+
                 # now with transfers
                 for country in self.INIT_STATES.keys():
                     # no trading with yourself
                     if (country != self.COUNTRY):
                         for resource in self.RESOURCES.keys():
                             temp_state = copy.deepcopy(node.STATE)
-                            if (int(temp_state[country][resource]) > 0):
+                            if (int(temp_state[country][resource]) > 0 and resource != "Population"):
                                 for index in range(1, int(temp_state[country][resource])):
-                                    temp_state[self.COUNTRY][resource] += index
-                                    temp_state[country][resource] -= index
+                                    temp_state[self.COUNTRY][resource] = int(temp_state[self.COUNTRY][resource]) + index
+                                    temp_state[country][resource] = int(temp_state[country][resource]) - index
                                     temp_schedule = copy.deepcopy(node.SCHEDULE)
-                                    temp_schedule.append({"Action": action, "Country": [country, 'self'], "EU": 0})
+                                    temp_schedule.append({"Action": {"name": "TRANSFER", "resource":resource, "quantity":index}, "Country": [country, 'self'], "EU": 0})
                                     temp_eu = self.expected_utility(temp_state, temp_schedule)
                                     temp_schedule[len(temp_schedule) - 1]['EU'] = temp_eu
                                     # if(transform == 'Housing' or transform == 'Electronics'):
@@ -104,8 +106,26 @@ class scheduler:
                                     #     print(self.state_quality(temp_state, self.COUNTRY))
                                     #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
                                     frontier.add(Node(temp_state, temp_schedule, temp_eu))
-                                    pass
-                            pass
+                    # should I trade?
+                    else:
+                        for resource in self.RESOURCES.keys():
+                            temp_state = copy.deepcopy(node.STATE)
+                            if (int(temp_state[country][resource]) > 0):
+                                for index in range(1, int(temp_state[country][resource])):
+                                    temp_state[self.COUNTRY][resource] = int(temp_state[self.COUNTRY][resource]) + index
+                                    temp_state[country][resource] = int(temp_state[country][resource]) - index
+                                    temp_schedule = copy.deepcopy(node.SCHEDULE)
+                                    temp_schedule.append({"Action": {"name": "TRANSFER", "resource":resource, "quantity":index}, "Country": [country, 'self'], "EU": 0})
+                                    temp_eu = self.expected_utility(temp_state, temp_schedule)
+                                    temp_schedule[len(temp_schedule) - 1]['EU'] = temp_eu
+                                    # if(transform == 'Housing' or transform == 'Electronics'):
+                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                    #     print(temp_schedule)
+                                    #     print(temp_state)
+                                    #     print(temp_eu)
+                                    #     print(self.state_quality(temp_state, self.COUNTRY))
+                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                    frontier.add(Node(temp_state, temp_schedule, temp_eu))
 
 
                 # next is transfers
