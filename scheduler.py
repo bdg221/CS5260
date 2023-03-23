@@ -86,12 +86,15 @@ class scheduler:
 
                 # now with transfers
                 for country in self.INIT_STATES.keys():
+                # while False:
                     # no trading with yourself
                     if (country != self.COUNTRY):
                         for resource in self.RESOURCES.keys():
                             temp_state = copy.deepcopy(node.STATE)
-                            if (int(temp_state[country][resource]) > 0 and resource != "Population"):
-                                for index in range(1, int(temp_state[country][resource])):
+                            for index in range(1, 5):
+                                if (int(temp_state[country][resource]) >= index and resource != "Population"):
+                                # changing range from int(temp_state[country][resource]) to just 5
+
                                     temp_state[self.COUNTRY][resource] = int(temp_state[self.COUNTRY][resource]) + index
                                     temp_state[country][resource] = int(temp_state[country][resource]) - index
                                     temp_schedule = copy.deepcopy(node.SCHEDULE)
@@ -110,8 +113,11 @@ class scheduler:
                     else:
                         for resource in self.RESOURCES.keys():
                             temp_state = copy.deepcopy(node.STATE)
-                            if (int(temp_state[country][resource]) > 0):
-                                for index in range(1, int(temp_state[country][resource])):
+                            for index in range(1, 5):
+                                if (int(temp_state[country][resource]) > 0 and resource != "Population"):
+                                # print(country + " has " + str(temp_state[country][resource]) + " of "+ resource)
+                                # changing range from int(temp_state[country][resource]) to just 5
+
                                     temp_state[self.COUNTRY][resource] = int(temp_state[self.COUNTRY][resource]) + index
                                     temp_state[country][resource] = int(temp_state[country][resource]) - index
                                     temp_schedule = copy.deepcopy(node.SCHEDULE)
@@ -143,18 +149,20 @@ class scheduler:
                 temp_factors = self.RESOURCES[resource]['Factor'].split(';')
 
                 for index in range(len(temp_factors)):
-                    x = float(states[country][resource]) / float(states[country]['Population'])
-                    if x > 0.5:
-                        pass
+                    # DEBUGGING TEST
+                    # x = float(states[country][resource]) / float(states[country]['Population'])
+                    # if x > 0.5:
+                    #     pass
                     if (float(states[country][resource]) / float(states[country]['Population']) < float(temp_factors[index])):
                         break
-
-                ret_value += float(states[country][resource]) / float(states[country]['Population']) * float(temp_weights[index])
+                # print(str(states[country][resource]) + " of " + resource + " is " + str(float(states[country][resource])* float(temp_weights[index])))
+                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(temp_weights[index])
 
             # default value: resource/popultation * weight
             else:
-                ret_value += float(states[country][resource]) / float(states[country]['Population']) * float(
-                    self.RESOURCES[resource]['Weight'])
+                # print(str(states[country][resource]) + " of " + resource + " is " + str(
+                #     float(states[country][resource]) * float(self.RESOURCES[resource]['Weight'])))
+                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(self.RESOURCES[resource]['Weight'])
         return ret_value
 
     # The undiscounted reward is the state_quality of a state minus the state_quality of the inital state
@@ -212,6 +220,13 @@ class scheduler:
 
         # check if the latest Action is a (transfOrm or transfEr
         # if TRANSFORM then send back self discounted reward
+        # print("#####################")
+        # print("original state quality: "+str(og_sq))
+        # print("new state quality: "+str(sq))
+        # print("Undiscounted Reward: "+str(ur))
+        # print("Discounted Reward: "+str(dr))
+        # print(schedule)
+        # print("#####################")
 
         if (len(schedule) == 0):
             return 0

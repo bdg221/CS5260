@@ -21,7 +21,7 @@ class PriorityQueue(object):
       self.max_size = max_size
 
    def add(self, node: Node) -> PriorityQueue:
-      cost = self.evaluation_function(node)
+      cost = node.EU
       for idx, node_and_cost in enumerate(self.queue):
          if self.priority_operator(cost, node_and_cost[1]):
             self.queue.insert(idx, (node, cost))

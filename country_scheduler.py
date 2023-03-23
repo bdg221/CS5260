@@ -18,7 +18,7 @@ def country_scheduler(your_country_name, resources_filename, initial_state_filen
     sched = scheduler.scheduler(your_country_name, resources, init_state, transforms, frontier_max_size)
     end_time = time.time()
     results = sched.search(depth=depth_bound, num_schedules=num_output_schedules)
-    print(round(end_time-start_time))
+    print(end_time-start_time)
     print(results)
     for schedule in results:
         print("#################################")
@@ -31,10 +31,6 @@ def country_scheduler(your_country_name, resources_filename, initial_state_filen
                 print("TRANSFER "+action['Country'][0]+"")
         print("#################################")
 
-    #ted_util.state_quality(init_state, your_country_name, resources))
-    # 2. build graph
-    #
-    # 3. perform search
-    # 4 . write out returned schedules to file
-# Test
-country_scheduler("Atlantis", "Inputs/resources.csv", "Inputs/states.csv", "outputs/output.txt", 1, 10, 10)
+
+# Test command   my_country    resource file           initial state          not used :-)   num_sched, depth, max size
+country_scheduler("Atlantis", "Inputs/resources.csv", "Inputs/states.csv", "outputs/output.txt", 3, 5, 100000)
