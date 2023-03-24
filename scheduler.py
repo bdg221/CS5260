@@ -112,26 +112,27 @@ class scheduler:
                     # should I trade?
                     else:
                         for resource in self.RESOURCES.keys():
-                            temp_state = copy.deepcopy(node.STATE)
-                            for index in range(1, 5):
-                                if (int(temp_state[country][resource]) > 0 and resource != "Population"):
-                                # print(country + " has " + str(temp_state[country][resource]) + " of "+ resource)
-                                # changing range from int(temp_state[country][resource]) to just 5
-
-                                    temp_state[self.COUNTRY][resource] = int(temp_state[self.COUNTRY][resource]) + index
-                                    temp_state[country][resource] = int(temp_state[country][resource]) - index
-                                    temp_schedule = copy.deepcopy(node.SCHEDULE)
-                                    temp_schedule.append({"Action": {"name": "TRANSFER", "resource":resource, "quantity":index}, "Country": [country, 'self'], "EU": 0})
-                                    temp_eu = self.expected_utility(temp_state, temp_schedule)
-                                    temp_schedule[len(temp_schedule) - 1]['EU'] = temp_eu
-                                    # if(transform == 'Housing' or transform == 'Electronics'):
-                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
-                                    #     print(temp_schedule)
-                                    #     print(temp_state)
-                                    #     print(temp_eu)
-                                    #     print(self.state_quality(temp_state, self.COUNTRY))
-                                    #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
-                                    frontier.add(Node(temp_state, temp_schedule, temp_eu))
+                            for trade_country in self.INIT_STATES.keys():
+                                if trade_country != country:
+                                    for index in range(1, 5):
+                                        if (int(temp_state[country][resource]) >= index and resource != "Population"):
+                                        # print(country + " has " + str(temp_state[country][resource]) + " of "+ resource)
+                                        # changing range from int(temp_state[country][resource]) to just 5
+                                            temp_state = copy.deepcopy(node.STATE)
+                                            temp_state[trade_country][resource] = int(temp_state[trade_country][resource]) + index
+                                            temp_state[country][resource] = int(temp_state[country][resource]) - index
+                                            temp_schedule = copy.deepcopy(node.SCHEDULE)
+                                            temp_schedule.append({"Action": {"name": "TRANSFER", "resource":resource, "quantity":index}, "Country": ['self', trade_country], "EU": 0})
+                                            temp_eu = self.expected_utility(temp_state, temp_schedule)
+                                            temp_schedule[len(temp_schedule) - 1]['EU'] = temp_eu
+                                            # if(transform == 'Housing' or transform == 'Electronics'):
+                                            #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                            #     print(temp_schedule)
+                                            #     print(temp_state)
+                                            #     print(temp_eu)
+                                            #     print(self.state_quality(temp_state, self.COUNTRY))
+                                            #     print("!!!!!!!!!!!!!!!!!!!!!!!!!")
+                                            frontier.add(Node(temp_state, temp_schedule, temp_eu))
 
 
                 # next is transfers
@@ -150,19 +151,19 @@ class scheduler:
 
                 for index in range(len(temp_factors)):
                     # DEBUGGING TEST
-                    # x = float(states[country][resource]) / float(states[country]['Population'])
-                    # if x > 0.5:
-                    #     pass
+                    x = float(states[country][resource]) / float(states[country]['Population'])
+                    if x > 0.5:
+                        pass
                     if (float(states[country][resource]) / float(states[country]['Population']) < float(temp_factors[index])):
                         break
                 # print(str(states[country][resource]) + " of " + resource + " is " + str(float(states[country][resource])* float(temp_weights[index])))
-                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(temp_weights[index])
+                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(temp_weights[index]) * 1000
 
             # default value: resource/popultation * weight
             else:
                 # print(str(states[country][resource]) + " of " + resource + " is " + str(
                 #     float(states[country][resource]) * float(self.RESOURCES[resource]['Weight'])))
-                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(self.RESOURCES[resource]['Weight'])
+                ret_value += float(states[country][resource])/ float(states[country]['Population']) * float(self.RESOURCES[resource]['Weight']) * 1000
         return ret_value
 
     # The undiscounted reward is the state_quality of a state minus the state_quality of the inital state
@@ -194,17 +195,22 @@ class scheduler:
         expon = -k * (dr - x)
         return (1 / (1 + math.exp(expon)))
 
-    def success_probability(self, state: dict[dict], depth) -> float:
+    def success_probability(self, state: dict[dict], depth, schedule) -> float:
         ret_val = 1
-        for country in state:
-            ret_val *= self.country_accept(country, state, depth)
+        for index in range(len(schedule[len(schedule) - 1]['Country'])):
+            if schedule[len(schedule) - 1]['Country'][index] == 'self':
+                temp_country = self.COUNTRY
+            else:
+                temp_country = schedule[len(schedule) - 1]['Country'][index]
+            prob_accept = self.country_accept(temp_country, state, depth)
+            ret_val *= prob_accept
         return ret_val
 
     def expected_utility(self, state: dict[dict], schedule: list[dict]) -> float:
 
         # negative constant for failure case
         # starting with -0.5 to see results
-        neg_C = -0.5
+        neg_C = -0.25
 
         depth = len(schedule)
         # state quality of country
@@ -233,7 +239,7 @@ class scheduler:
         if schedule[len(schedule) - 1]['Action']['name'] != 'TRANSFER':
             return dr
         else:
-            prob_success = self.success_probability(state, depth)
+            prob_success = self.success_probability(state, depth, schedule)
             eu = (prob_success * dr) + ((1 - prob_success) * neg_C)
             return eu
 
